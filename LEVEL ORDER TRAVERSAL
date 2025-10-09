@@ -1,0 +1,14 @@
+from collections import deque
+ans=[]
+q=deque([root]):
+while(len(q)>0):
+    level=[]
+    for i in range(len(q)):
+        node=q.popleft()
+        if(node.left):
+            q.append(node.left)
+        if(node.right):
+            q.append(node.right)
+        level.append(node.data)
+    ans.append(level)
+print(ans)
