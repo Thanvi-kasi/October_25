@@ -1,0 +1,62 @@
+from collections import deque
+
+class Solution:
+    def orangesRotting(self, grid):
+        rows, cols = len(grid), len(grid[0])
+        queue = deque()
+        fresh_count = 0
+
+        # Initialize the queue with rotten oranges and count fresh oranges
+        for r in range(rows):
+            for c in range(cols):
+                if grid[r][c] == 2:
+                    queue.append((r, c))  # Add rotten orange position
+                elif grid[r][c] == 1:
+                    fresh_count += 1  # Count fresh oranges
+
+        # If no fresh oranges, return 0
+        if fresh_count == 0:
+            return 0
+
+        # Directions for 4-way adjacency (up, down, left, right)
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        minutes = 0
+
+        # BFS to rot the fresh oranges
+        while queue:
+            size = len(queue)  # Number of rotten oranges at the current minute
+            for _ in range(size):
+                x, y = queue.popleft()
+
+                # Check all 4 adjacent directions
+                for dx, dy in directions:
+                    nx, ny = x + dx, y + dy
+
+                    # If the adjacent orange is fresh, rot it
+                    if 0 <= nx < rows and 0 <= ny < cols and grid[nx][ny] == 1:
+                        grid[nx][ny] = 2  # Mark it as rotten
+                        fresh_count -= 1  # Decrease the fresh orange count
+                        queue.append((nx, ny))  # Add to queue for the next minute
+
+            # After processing all rotten oranges in the current level, increment the minutes
+            minutes += 1
+
+        # If there are still fresh oranges left, return -1
+        return minutes if fresh_count == 0 else -1
+
+
+# Example usage:
+if __name__ == "__main__":
+    solution = Solution()
+
+    # Test case 1:
+    grid1 = [[2, 1, 1], [1, 1, 0], [0, 1, 1]]
+    print(f"Test case 1: {solution.orangesRotting(grid1)}")  # Expected output: 4
+
+    # Test case 2:
+    grid2 = [[2, 1, 1], [0, 1, 1], [1, 0, 1]]
+    print(f"Test case 2: {solution.orangesRotting(grid2)}")  # Expected output: -1
+
+    # Test case 3:
+    grid3 = [[0, 2]]
+    print(f"Test case 3: {solution.orangesRotting(grid3)}")  # Expected output: 0
